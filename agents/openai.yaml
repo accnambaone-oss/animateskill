@@ -1,0 +1,4 @@
+interface:
+  display_name: "Render Local Animation"
+  short_description: "Draw every frame locally and export a verified 24 fps MP4"
+  default_prompt: "Use $render-local-animation to animate my scene and render every frame locally at 24 fps."

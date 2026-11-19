@@ -1,0 +1,6 @@
+{
+  "width":720, "height":1280,
+  "shots":[{"dir":"rope-lift","frames":144}],
+  "speech":[],
+  "effects":[{"frame":29,"kind":"creak","duration":0.65,"gain":0.16},{"frame":118,"kind":"tap","duration":0.18,"gain":0.12}]
+}

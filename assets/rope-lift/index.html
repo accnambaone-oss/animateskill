@@ -1,0 +1,53 @@
+<!doctype html><html lang="en"><meta charset="utf-8"><title>The lift</title>
+<style>*{margin:0}html,body,main,svg{display:block;width:100%;height:100%;overflow:hidden;background:#0f1823}</style>
+<main data-composition-id="lift" data-start="0" data-duration="6" data-width="720" data-height="1280" data-fps="24">
+<svg viewBox="0 0 720 1280" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<linearGradient id="wall" x2="0.7" y2="1"><stop stop-color="#b98b65"/><stop offset=".4" stop-color="#576772"/><stop offset="1" stop-color="#293f50"/></linearGradient>
+<linearGradient id="light" x2="0.2" y2="1"><stop stop-color="#ffdf92" stop-opacity=".63"/><stop offset="1" stop-color="#efcd85" stop-opacity="0"/></linearGradient>
+<radialGradient id="fur"><stop stop-color="#c08464"/><stop offset="1" stop-color="#664344"/></radialGradient>
+<pattern id="blocks" width="182" height="122" patternUnits="userSpaceOnUse"><path d="M0 2h182M0 63h182M46 2v61m92 0v61" fill="none" stroke="#172736" stroke-width="6" opacity=".68"/><path d="M0 7h182M0 68h182" stroke="#d7b99e" opacity=".24" stroke-width="3"/></pattern>
+</defs>
+<rect width="720" height="1280" fill="url(#wall)"/><rect width="720" height="1280" fill="url(#blocks)"/>
+<path d="M130 0H553L635 1170 100 1200Z" fill="url(#light)"/>
+<ellipse cx="360" cy="28" rx="275" ry="82" fill="#33313a"/><ellipse cx="360" cy="17" rx="255" ry="67" fill="#ffd99b"/>
+<path d="M0 1120l175-26 263 11 282-28v203H0Z" fill="#243542"/>
+<path id="rope" fill="none" stroke="#4b3937" stroke-width="11"/><path id="fiber" fill="none" stroke="#e7b777" stroke-width="5" stroke-dasharray="8 3"/>
+<g id="animal">
+<path id="tail" fill="none" stroke="#bd8277" stroke-width="9" stroke-linecap="round"/>
+<ellipse cx="0" cy="12" rx="45" ry="59" transform="rotate(20)" fill="url(#fur)" stroke="#422f37" stroke-width="4"/>
+<path d="M-20-35Q-5-90 31-59L62-40Q46-23 19-20L-8-12Z" fill="#ba8469" stroke="#49363b" stroke-width="4"/>
+<ellipse cx="-7" cy="-58" rx="17" ry="20" fill="#a76c60" stroke="#543c40" stroke-width="4"/>
+<ellipse cx="-7" cy="-58" rx="9" ry="11" fill="#d59a88"/><circle cx="26" cy="-51" r="5" fill="#211e26"/><circle cx="27" cy="-53" r="1.8" fill="#fff0c4"/>
+<circle cx="61" cy="-40" r="5" fill="#583e42"/><path d="m47-33 31 2m-34 1 28 8" stroke="#dbc3aa" stroke-width="2"/>
+<g fill="none" stroke-linecap="round"><path id="foot" stroke="#c38b79" stroke-width="10"/><path d="M-24 15Q-3 25 27 4" stroke="#dfab79" stroke-width="10"/><path id="arm" stroke="#d19a81" stroke-width="9"/></g>
+</g><path d="M550 178l170-21v35l-170 29Z" fill="#505056"/><path d="M550 178l170-21v8l-170 21Z" fill="#d1ad7c"/>
+</svg></main>
+<script src="gsap.min.js"></script>
+<script>
+const clamp=x=>Math.min(1,Math.max(0,x));
+const smooth=x=>(x=clamp(x),x*x*(3-2*x));
+const el=id=>document.getElementById(id);
+function drawFrame(f){
+  const lift=smooth((f-29)/90), tension=smooth((f-6)/23);
+  const phase=Math.max(0,f-29), swing=32*Math.sin(phase/10)*Math.exp(-phase/38);
+  const x=354+swing+154*smooth((f-86)/37), y=1036-814*lift;
+  const angle=swing*.4-9*smooth((f-111)/20);
+  const a=angle*Math.PI/180;
+  const anchorX=x+27*Math.cos(a)-4*Math.sin(a), anchorY=y+27*Math.sin(a)+4*Math.cos(a);
+  const bend=100*(1-tension);
+  const d='M383 0 Q'+(385+bend)+' '+(anchorY*.69)+' '+anchorX+' '+anchorY;
+  for(const id of ['rope','fiber'])el(id).setAttribute('d',d);
+  el('animal').setAttribute('transform','translate('+x+' '+y+') rotate('+angle+')');
+  el('tail').setAttribute('d','M-27 47 Q-86 '+(96+swing)+' -111 42 T-151 '+(30+swing*.6));
+  const reach=smooth((f-96)/19),kick=Math.sin(phase/7)*Math.exp(-phase/60)*18;
+  el('arm').setAttribute('d','M13 -8 Q34 '+(-4-24*reach)+' '+(32+25*reach)+' '+(-1-36*reach));
+  el('foot').setAttribute('d','M-6 46q-15 20 '+(-20+kick)+' '+(26+kick*.3)+'l16 2');
+}
+window.drawFrame=drawFrame; drawFrame(0);
+if(window.gsap){
+  const clock={frame:0};
+  const timeline=gsap.timeline({paused:true}).to(clock,{frame:144,duration:6,ease:'none',onUpdate:()=>drawFrame(Math.min(143,Math.round(clock.frame)))});
+  window.__timelines={lift:timeline};
+}
+</script></html>
